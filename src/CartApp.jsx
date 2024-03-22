@@ -1,69 +1,84 @@
-import { useEffect, useState } from "react";
-import { getProducts } from "./services/productService"
+import { useState } from "react"
+import { CartView } from "./components/CartView"
+import { CatalogView } from "./components/CatalogView"
+
+
+const initialCartItems =[
+    //{
+       // product:{
+
+        //},
+        //quantity: 0,
+        //total: 0
+    //}
+];
 
 export const CarApp = () =>{
 
-    const [products, setProducts] =  useState([]);
-    useEffect(
-        ()=>{
-            setProducts( getProducts());
-        },[] );
- 
 
+    const [cartItems, setCartItems] = useState(initialCartItems);
+
+    //FUNCION PARA AGREGAR  PRODUCTOS AL CARRITO DE COMPRAS 
+     const handlerAddProductCart =  (product) =>
+     {
+          const hasItem =  cartItems.find((i)=> i.product.id===product.id );
+           if(hasItem){
+             //setCartItems([
+                //...cartItems.filter((i)=> i.product.id!== product.id),
+                //{
+                 //   product,
+               //     quantity:hasItem.quantity +1,
+             //   }               
+                
+           // ])
+
+              setCartItems(              
+                cartItems.map((i)=>{
+
+                if (i.product.id === product.id){
+                    i.quantity = i.quantity +1;
+                }
+                 return i;
+                })
+              )
+            
+           }else{
+
+            setCartItems([
+                ...cartItems,
+                {
+                    product,
+                    quantity:1,
+                    
+              }
+            ]);
+           }
+        
+    }
+
+ //FUNCION DE ELIMINAR  UN ITEM DEL CARRITO
+    const handlerDeleteProductCart = (id)=>{
+        setCartItems([
+            ...cartItems.filter((i)=> i.product.id!== id)
+        ])
+
+    }
      return (<> 
       <h3>Cart App</h3>
-        <div  className="container">
-        <div className="row">
-            {products.map(prod =>(
-
-                 <div className="col-4 my-2" key={prod.id}>
-                 <div className="card">
-                     <div className="card-body">
-                         <h5 className="card-title">{prod.name}</h5>
-                         <p className="card-text">{prod.description} </p>
-                         <p className="card-text">{prod.price}</p>
-                         <button className="btn btn-primary">Agregar</button>
-                     </div>
-                 </div>
-             </div>
- 
-                
-            ))}
+      <CatalogView handler = {handlerAddProductCart}/>
+        <div  className=" container my-4">
            
-        </div>
-
-
-           <div className="my-4 w-50">
-            <h3>Carro de compra </h3>
-            <table className="table table-hover table-striped">
-                <thead>
-                    <tr>
-                        <th>producto</th>
-                        <th>precio</th>
-                        <th>cantidad</th>
-                        <th>total</th>
-                        <th>eliminar</th>
-                    </tr>
-                </thead>
-                    <tbody>
-                        <tr>
-                            <td>nombre</td>
-                            <td>precio</td>
-                            <td>cantidad</td>
-                            <td>total</td>
-                            <td>eliminar</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                      <tr>
-                        <td colSpan="3" className="text-end fw-bold">total</td>
-                        <td colSpan="2" className="text-start fw-bold">12342</td>
-                      </tr>
-                    </tfoot>
-               
-            </table>
-           </div>
+           {/**FUNCION PARA OCULTAR LA TABLA DE CARRITO DE COMPRAS*/}
+            
+            {cartItems?.length<=0 ||
+            (
+                 <div className=" my-4 w-50">
+                     <CartView items={cartItems} handlerDelete ={handlerDeleteProductCart}/>
+                 </div>
+           )}
+          
 
         </div>
      </>)
+
 }
