@@ -9,7 +9,9 @@ import { calculateTotal } from "../services/productService";
 
   useEffect( ()=>{
       setTotal( calculateTotal(items));
-  },[items])
+  },[items]);
+  
+     
  
 
 
